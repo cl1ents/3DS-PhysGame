@@ -34,7 +34,13 @@
 *.cia
 *.3dsx
 
+# Others
+
+*.lst
+
 # Directories
 .vscode/
+PhysGame/build/
+PhysGame/output/
+PhysGame/lib/
 build/
-output/

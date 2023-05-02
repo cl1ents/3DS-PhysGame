@@ -37,7 +37,7 @@ TARGET      := $(notdir $(CURDIR))
 BUILD       := build
 SOURCES     := source
 DATA        := data
-INCLUDES    := include
+INCLUDES    := include ../chipmunk/include
 GRAPHICS    := gfx
 OUTPUT      := output
 RESOURCES   := resources
@@ -64,15 +64,16 @@ ASFLAGS     := $(ARCH)
 LDFLAGS     = -specs=3dsx.specs $(ARCH) -Wl,-Map,$(notdir $*.map)
 
 #---------------------------------------------------------------------------------
-# Libraries needed to link into the executable.
-#---------------------------------------------------------------------------------
-LIBS := -lcitro2d -lcitro3d -lctru -lm -lchipmunk
-
-#---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS	:= $(PORTLIBS) $(CTRULIB)
+LIBDIRS	:= $(PORTLIBS) $(CTRULIB) $(TOPDIR)
+
+
+#---------------------------------------------------------------------------------
+# Libraries needed to link into the executable.
+#---------------------------------------------------------------------------------
+LIBS := -lcitro2d -lcitro3d -lctru -lm -lchipmunk
 
 #---------------------------------------------------------------------------------
 # no real need to edit anything past this point unless you need to add additional
