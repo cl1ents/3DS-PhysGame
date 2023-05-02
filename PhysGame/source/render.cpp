@@ -7,8 +7,10 @@
 
 #include <tuple>
 #include <vector>
+#include <chrono>
 
 #include "render.hpp"
+#include "hsv.cpp"
 #include "Del.hpp"
 
 #define SCREEN_WIDTH  320
@@ -19,10 +21,16 @@ using Point = std::vector<Coord>;
 using N = uint32_t;
 
 using namespace render;
+using namespace std::chrono;
 
 void render::drawShape(cpShape *shape, void *data) {
+    milliseconds ms = duration_cast< milliseconds >(
+        system_clock::now().time_since_epoch()
+    );
+    
     cpBody *body = cpShapeGetBody(shape);
-    u32 color = C2D_Color32f(0,0,0,1);
+    rgb colorRGB = hsv2rgb({(ms.count()/50)%360, .8, .8});
+    u32 color = C2D_Color32f(colorRGB.r,colorRGB.g,colorRGB.b,1);
     u32 bgcolor = C2D_Color32f(1,1,1,1);
 
     cpShapeType type = shape->klass->type;
@@ -31,7 +39,7 @@ void render::drawShape(cpShape *shape, void *data) {
         cpCircleShape* circle = (cpCircleShape *)shape;
         cpVect pos = cpBodyLocalToWorld(body, circle->c);
         cpVect lineEnd = cpvadd(cpBodyLocalToWorld(body, cpv(0, cpCircleShapeGetRadius(shape))), cpvsub(pos, body->p));
-        C2D_DrawCircleSolid(body->p.x, body->p.y, .5, cpCircleShapeGetRadius(shape), C2D_Color32f(0,0,0,1));
+        C2D_DrawCircleSolid(body->p.x, body->p.y, .5, cpCircleShapeGetRadius(shape), color);
         C2D_DrawLine(pos.x, pos.y, color, lineEnd.x, lineEnd.y, bgcolor, 1, .5);
     }
     else if (type == CP_SEGMENT_SHAPE) 
