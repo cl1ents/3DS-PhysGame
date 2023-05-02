@@ -1,1 +1,0 @@
-citra.exe /d/Homebrew/Test/output/Test.3dsx
