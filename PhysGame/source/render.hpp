@@ -3,6 +3,7 @@
 
 namespace render {
     extern cpVect offset;
+    extern C3D_RenderTarget* bottom;
 
     struct shapeUserData {
         u32 color;
@@ -16,4 +17,7 @@ namespace render {
 
     bool isShapeOnscreen(cpShape *shape);
     void drawShape(cpShape *shape, void *v = nullptr);
+
+    void setUp();
+    void renderFrame(float deltaTime);
 }

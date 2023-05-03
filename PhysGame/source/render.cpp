@@ -7,9 +7,9 @@
 
 #include <tuple>
 #include <vector>
-#include <chrono>
 
 #include "render.hpp"
+#include "physics.hpp"
 #include "hsv.cpp"
 #include "Del.hpp"
 
@@ -21,13 +21,13 @@ using Point = std::vector<Coord>;
 using N = uint32_t;
 
 using namespace render;
-using namespace std::chrono;
 
 const u32 bgcolor = C2D_Color32f(1,1,1,1);
 
 cpBB screen = cpBBNewForExtents(cpv(SCREEN_WIDTH/2.0, SCREEN_HEIGHT/2.0), SCREEN_WIDTH/2.0, SCREEN_HEIGHT/2.0);
 
 cpVect render::offset = cpv(0,10);
+C3D_RenderTarget *render::bottom;
 
 render::shapeUserData *render::getRenderData(cpShape *shape)
 {
@@ -96,10 +96,6 @@ bool render::isShapeOnscreen(cpShape *shape)
 
 void render::drawShape(cpShape *shape, void *v) {
     if (!render::isShapeOnscreen(shape)) return;
-
-    milliseconds ms = duration_cast< milliseconds >(
-        system_clock::now().time_since_epoch()
-    );
     
     render::shapeUserData *data = getRenderData(shape);
 
@@ -145,4 +141,23 @@ void render::drawShape(cpShape *shape, void *v) {
             );
         }
     }
+}
+
+void render::setUp()
+{
+    C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
+    C2D_Init(C2D_DEFAULT_MAX_OBJECTS);
+    C2D_Prepare();
+    render::bottom = C2D_CreateScreenTarget(GFX_BOTTOM, GFX_LEFT);
+}
+
+void render::renderFrame(float deltaTime)
+{
+    C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+    C2D_TargetClear(render::bottom, bgcolor);
+    C2D_SceneBegin(render::bottom);
+
+    cpSpaceEachShape(physics::space, render::drawShape, NULL); 
+
+    C3D_FrameEnd(0);
 }
