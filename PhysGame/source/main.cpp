@@ -49,9 +49,9 @@ int main(int argc, char **argv)
             cpv(-w/2.0f,-h/2.0f),
         };
         cpShape *shape = cpSpaceAddShape(space, cpPolyShapeNew(platform, 4, verts, cpTransformIdentity, 0.0));
-        cpShapeSetElasticity(shape, .8f);
-	    cpShapeSetFriction(shape, 1.0f);
-        cpShapeSetDensity(shape, .2);
+        cpShapeSetElasticity(shape, 0.1f);
+	    cpShapeSetFriction(shape, 0.5f);
+        cpShapeSetDensity(shape, 1.0f);
     }
 
     cpBody *box = cpSpaceAddBody(space, cpBodyNew(1.0f, 1.0f));
@@ -76,8 +76,9 @@ int main(int argc, char **argv)
     // cpBodySetPosition(platform, cpv(SCREEN_WIDTH/2, SCREEN_HEIGHT-25.0));
     {
         cpVect offset = cpv(SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
-        float h = SCREEN_HEIGHT+40;
-        float w = SCREEN_WIDTH+40;
+        float radius = 500;
+        float h = SCREEN_HEIGHT+radius*2;
+        float w = SCREEN_WIDTH+radius*2;
         cpVect verts[] = {
             cpv(-w/2.0f,-h/2.0f),
             cpv(-w/2.0f, h/2.0f),
@@ -89,8 +90,8 @@ int main(int argc, char **argv)
         for(int i=0; i<(sizeof(verts)/sizeof(cpVect) - 1); i++)
         {
 		    cpVect a = verts[i], b = verts[i+1];
-            cpShape *shape = cpSegmentShapeNew(border, cpvadd(a, offset), cpvadd(b, offset), 20.0f);
-            cpShapeSetElasticity(shape, .8f);
+            cpShape *shape = cpSegmentShapeNew(border, cpvadd(a, offset), cpvadd(b, offset), radius);
+            cpShapeSetElasticity(shape, 1.0f);
             cpShapeSetFriction(shape, 1.0f);
             cpShapeSetDensity(shape, .5);
             cpSpaceAddShape(space, shape);
@@ -110,22 +111,30 @@ int main(int argc, char **argv)
         
         // Physics
 
+        if (kDown & KEY_TOUCH)
+        {
+            hidTouchRead(&touch);
+
+            cpVect click = cpv(touch.px, touch.py)+render::offset;
+            cpBodySetVelocity(ball, cpvmult(cpvsub(click, ball->p), 60));
+        }
+        if (kDown & KEY_A)
+        {
+            cpBodySetVelocity(ball, cpv(0,0));
+            cpBodySetAngularVelocity(ball, 0);
+            cpBodySetPosition(ball, cpv(SCREEN_WIDTH/2, SCREEN_HEIGHT/2));
+        }
+
         cpSpaceStep(space, 1.0/60);
+        render::offset = ball->p-cpv(SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
 
         // RENDER
         C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
         C2D_TargetClear(bottom, C2D_Color32f(1, 1, 1, 1));
         C2D_SceneBegin(bottom);
-        
-        if (kHeld & KEY_TOUCH)
-        {
-            hidTouchRead(&touch);
-
-            cpVect click = cpv(touch.px, touch.py);
-            cpBodySetVelocity(ball, cpvmult(cpvsub(click, ball->p), 60));
-        }
 
         cpSpaceEachShape(space, render::drawShape, NULL);
+
         C3D_FrameEnd(0);
 	}
 
