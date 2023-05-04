@@ -44,7 +44,7 @@ int main(int argc, char **argv)
         
         // Physics
 
-        if (kDown & KEY_TOUCH)
+        if (kHeld & KEY_TOUCH)
         {
             hidTouchRead(&touch);
 
@@ -59,7 +59,7 @@ int main(int argc, char **argv)
         }
 
         cpSpaceStep(physics::space, 1.0/60);
-        render::offset = physics::ball->p-cpv(SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
+        render::offset = (physics::ball->p-cpv(SCREEN_WIDTH/2, SCREEN_HEIGHT/2))*.3;
 
         // RENDER
         render::renderFrame(1.0/60);
