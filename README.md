@@ -13,6 +13,6 @@
 4. ???
 5. Profit
 
-Well, nope!
+Another one?
 
 :godmode:
