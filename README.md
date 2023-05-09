@@ -13,6 +13,6 @@
 4. ???
 5. Profit
 
-Hello World!
+No.
 
 :godmode:
