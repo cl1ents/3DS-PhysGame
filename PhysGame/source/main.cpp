@@ -37,8 +37,11 @@ int main(int argc, char **argv)
     while (aptMainLoop())
     {
         hidScanInput();
+
+        u32 kUp = hidKeysUp();
         u32 kDown = hidKeysDown();
         u32 kHeld = hidKeysHeld();
+        u32 kRepeat = hidKeysDownRepeat();
 
         if (kDown & KEY_START) break;
         
