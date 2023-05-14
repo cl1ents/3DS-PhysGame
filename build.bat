@@ -1,5 +1,6 @@
 @echo off
 cd PhysGame
+make clean
 make cia
 cd ..
 

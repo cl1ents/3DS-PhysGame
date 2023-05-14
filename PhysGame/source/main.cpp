@@ -1,6 +1,5 @@
 #include <3ds.h>
 #include <stdio.h>
-#include <citro2d.h>
 #include <math.h>
 #include <chipmunk/chipmunk_structs.h>
 #include <chipmunk/chipmunk.h>
@@ -30,10 +29,16 @@ int main(int argc, char **argv)
     // Main loop
     
     printf("Chipmunk %s\n", cpVersionString);
+    printf("Inf = %d\n", INFINITY);
+    printf("Test1 = %d\n", 1e300);
+    printf("Test2 = %d\n", 1e300*1e300);
+    printf("Test3 = %d\n", __builtin_inff());
     milliseconds ms = duration_cast< milliseconds >(
         system_clock::now().time_since_epoch()
     );
     srand(ms.count());
+
+    float deltaTime = 1.0/60;
     while (aptMainLoop())
     {
         hidScanInput();
@@ -44,28 +49,16 @@ int main(int argc, char **argv)
         u32 kRepeat = hidKeysDownRepeat();
 
         if (kDown & KEY_START) break;
-        
-        // Physics
-
         if (kHeld & KEY_TOUCH)
         {
             hidTouchRead(&touch);
-
-            cpVect click = cpv(touch.px, touch.py)+render::offset;
-            cpBodySetVelocity(physics::ball, cpvmult(cpvsub(click, physics::ball->p), 60));
-        }
-        if (kDown & KEY_A)
-        {
-            cpBodySetVelocity(physics::ball, cpv(0,0));
-            cpBodySetAngularVelocity(physics::ball, 0);
-            cpBodySetPosition(physics::ball, cpv(SCREEN_WIDTH/2, SCREEN_HEIGHT/2));
         }
 
-        cpSpaceStep(physics::space, 1.0/60);
-        render::offset = (physics::ball->p-cpv(SCREEN_WIDTH/2, SCREEN_HEIGHT/2))*.3;
+        // PHYSICS
+        physics::step(deltaTime, kUp, kDown, kHeld, kRepeat, touch);
 
         // RENDER
-        render::renderFrame(1.0/60);
+        render::renderFrame(deltaTime);
 	}
 
 	C2D_Fini();

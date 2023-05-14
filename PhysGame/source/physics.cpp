@@ -64,7 +64,7 @@ void physics::setUp()
     // cpBodySetPosition(platform, cpv(SCREEN_WIDTH/2, SCREEN_HEIGHT-25.0));
     {
         cpVect offset = cpv(SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
-        float radius = 500;
+        float radius = 10;
         float h = SCREEN_HEIGHT+radius*2;
         float w = SCREEN_WIDTH+radius*2;
         cpVect verts[] = {
@@ -86,3 +86,21 @@ void physics::setUp()
         }
     }
 };
+
+cpVect click;
+void physics::step(float deltaTime, u32 kUp, u32 kDown, u32 kHeld, u32 kRepeat, touchPosition touch)
+{
+    if (kHeld & KEY_TOUCH)
+    {
+        click = cpv(touch.px, touch.py)+render::offset;
+        cpBodySetVelocity(physics::ball, cpvmult(cpvsub(click, physics::ball->p), 60));
+    }
+    if (kDown & KEY_SELECT)
+    {
+        cpBodySetVelocity(physics::ball, cpv(0,0));
+        cpBodySetAngularVelocity(physics::ball, 0);
+        cpBodySetPosition(physics::ball, cpv(SCREEN_WIDTH/2, SCREEN_HEIGHT/2));
+    }
+
+    cpSpaceStep(physics::space, deltaTime);
+}

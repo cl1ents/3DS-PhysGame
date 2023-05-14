@@ -116,7 +116,13 @@ void render::drawShape(cpShape *shape, void *v) {
     {
         cpVect A = cpBodyLocalToWorld(body, cpSegmentShapeGetA(shape)) - render::offset;
         cpVect B = cpBodyLocalToWorld(body, cpSegmentShapeGetB(shape)) - render::offset;
-        C2D_DrawLine(body->p.x+A.x, body->p.y+A.y, color, body->p.x+B.x, body->p.x+B.y, color, cpSegmentShapeGetRadius(shape)*2, .5);
+
+        int radius = cpSegmentShapeGetRadius(shape);
+
+        C2D_DrawCircleSolid(A.x, A.y, .5, radius, color);
+        C2D_DrawCircleSolid(B.x, B.y, .5, radius, color);
+
+        C2D_DrawLine(A.x, A.y, color, B.x, B.y, color, cpSegmentShapeGetRadius(shape)*2, .5);
     }
     else if (type == CP_POLY_SHAPE) 
     {
@@ -152,7 +158,10 @@ void render::setUp()
 }
 
 void render::renderFrame(float deltaTime)
-{
+{   
+    cpVect target = physics::ball->p-cpv(SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
+    render::offset = render::offset+(target-render::offset)*.3;
+    
     C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
     C2D_TargetClear(render::bottom, bgcolor);
     C2D_SceneBegin(render::bottom);
