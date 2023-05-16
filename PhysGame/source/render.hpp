@@ -2,9 +2,14 @@
 #include <citro2d.h>
 #include <vector>
 
+#define TOP_SCREEN_WIDTH  400
+#define BOTTOM_SCREEN_WIDTH  320
+#define SCREEN_HEIGHT 240
+
 namespace render {
     extern cpVect offset;
     extern C3D_RenderTarget* bottom;
+    extern C3D_RenderTarget* top;
 
     struct shapeUserData {
         u32 color;

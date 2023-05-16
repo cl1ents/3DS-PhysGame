@@ -20,7 +20,7 @@ int main(int argc, char **argv)
 
     render::setUp();
 
-    consoleInit(GFX_TOP, NULL);
+    consoleInit(GFX_BOTTOM, NULL);
 
     touchPosition touch;
 

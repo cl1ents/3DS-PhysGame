@@ -13,9 +13,6 @@
 #include "hsv.cpp"
 #include "Del.hpp"
 
-#define SCREEN_WIDTH  320
-#define SCREEN_HEIGHT 240
-
 using Coord = double;
 using Point = std::vector<Coord>;
 using N = uint32_t;
@@ -24,10 +21,11 @@ using namespace render;
 
 const u32 bgcolor = C2D_Color32f(1,1,1,1);
 
-cpBB screen = cpBBNewForExtents(cpv(SCREEN_WIDTH/2.0, SCREEN_HEIGHT/2.0), SCREEN_WIDTH/2.0, SCREEN_HEIGHT/2.0);
+cpBB screen = cpBBNewForExtents(cpv(TOP_SCREEN_WIDTH/2.0, SCREEN_HEIGHT/2.0), TOP_SCREEN_WIDTH/2.0, SCREEN_HEIGHT/2.0);
 
 cpVect render::offset = cpv(0,10);
 C3D_RenderTarget *render::bottom;
+C3D_RenderTarget *render::top;
 
 render::shapeUserData *render::getRenderData(cpShape *shape)
 {
@@ -90,7 +88,7 @@ render::shapeUserData *render::getRenderData(cpShape *shape)
 
 bool render::isShapeOnscreen(cpShape *shape)
 {
-    screen = cpBBNewForExtents(cpv(SCREEN_WIDTH/2.0, SCREEN_HEIGHT/2.0)+render::offset, SCREEN_WIDTH/2.0, SCREEN_HEIGHT/2.0);
+    screen = cpBBNewForExtents(cpv(TOP_SCREEN_WIDTH/2.0, SCREEN_HEIGHT/2.0)+render::offset, TOP_SCREEN_WIDTH/2.0, SCREEN_HEIGHT/2.0);
     return cpBBIntersects(screen, cpShapeGetBB(shape));
 }
 
@@ -155,16 +153,17 @@ void render::setUp()
     C2D_Init(C2D_DEFAULT_MAX_OBJECTS);
     C2D_Prepare();
     render::bottom = C2D_CreateScreenTarget(GFX_BOTTOM, GFX_LEFT);
+    render::top = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
 }
 
 void render::renderFrame(float deltaTime)
-{   
-    cpVect target = physics::ball->p-cpv(SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
-    render::offset = render::offset+(target-render::offset)*.3;
+{
+    cpVect target = physics::player->body->p-cpv(TOP_SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
+    render::offset = render::offset+(target-render::offset)*deltaTime*20;
     
     C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-    C2D_TargetClear(render::bottom, bgcolor);
-    C2D_SceneBegin(render::bottom);
+    C2D_TargetClear(render::top, bgcolor);
+    C2D_SceneBegin(render::top);
 
     cpSpaceEachShape(physics::space, render::drawShape, NULL); 
 

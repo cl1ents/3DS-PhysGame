@@ -1,5 +1,5 @@
 @echo off
 cd PhysGame
-make clean
+rem make clean
 make citra
 cd ..
