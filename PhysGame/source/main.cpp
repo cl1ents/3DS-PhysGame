@@ -55,7 +55,8 @@ int main(int argc, char **argv)
         }
 
         // PHYSICS
-        physics::step(deltaTime, kUp, kDown, kHeld, kRepeat, touch);
+        for (int s = 0; s<PHYSICS_STEPS; s++)
+            physics::step(deltaTime/PHYSICS_STEPS, kUp, kDown, kHeld, kRepeat, touch);
 
         // RENDER
         render::renderFrame(deltaTime);

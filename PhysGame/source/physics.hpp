@@ -1,4 +1,5 @@
 #define boxVerts(w, h) { cpv(-w/2.0f,-h/2.0f), cpv(-w/2.0f, h/2.0f), cpv( w/2.0f, h/2.0f), cpv( w/2.0f,-h/2.0f), cpv(-w/2.0f,-h/2.0f) }
+#define PHYSICS_STEPS 4
 
 #pragma once
 #include <3ds.h>
