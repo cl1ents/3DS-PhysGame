@@ -13,6 +13,9 @@
 4. ???
 5. Profit
 
-Okay?
+## Known issues
+
+### Why does everything fall when I launch the game after compiling!
+Blame devkit, they somehow broke math.h's INFINITE, I'm probably going to find a proper fix later on.
 
 :godmode:
